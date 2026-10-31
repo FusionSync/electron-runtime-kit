@@ -166,7 +166,20 @@ sherpa-onnx-node-1.13.8-linux-loong64.tar.gz
 
 ## Patch 维护
 
-当前实际用于 Loong64 ONNX Runtime 1.28.0 构建的补丁位于：
+补丁按“上游组件/版本”存放。当前仓库记录两类实际使用的补丁：
+
+| 组件 | 版本 | 用途 |
+| --- | --- | --- |
+| ONNX Runtime | 1.28.0 | cpuinfo LoongArch 支持，以及 Loong64 构建脚本修正 |
+| `builder-util` | 25.1.7 | 注册 `loong64`、`riscv64`、`mips64el` 架构及 Linux 映射 |
+| `app-builder-lib` | 25.1.8 | 允许打包配置声明这些架构 |
+| `electron-builder` | 25.1.8 | 增加 `--loong64` 和 `--mips64el` 命令行选项 |
+| `app-builder-bin` | 5.0.0-alpha.10 | 在 Loong64 主机上兼容 `loong64`/`loongarch64` 二进制目录 |
+| `app-builder` | 5.0.0-alpha.13 | 支持 `mips64el` AppImage，并允许从环境变量指定 AppImage 工具包 |
+
+electron-builder 相关补丁只负责打包工具识别目标架构；它们不会编译 Electron 或原生依赖。`app-builder` 是 Linux x64 主机构建工具，AppImage 仍需另外提供对应的 `runtime-loong64` 或 `runtime-mips64el`。Electron 本体的 Loong64/Chromium 补丁继续由 [FusionSync/electron-loong64](https://github.com/FusionSync/electron-loong64) 维护，本仓库不重复复制。
+
+ONNX Runtime 补丁位于：
 
 ```text
 patches/onnxruntime/1.28.0/0001-cpuinfo-loong64.patch
@@ -175,7 +188,16 @@ patches/onnxruntime/1.28.0/0002-onnxruntime-build.patch
 
 第一份补丁为 cpuinfo 的 LoongArch 支持，第二份补丁修改 ONNX Runtime 的构建脚本和 cpuinfo portfile。应用时把第一份补丁保存为 ONNX Runtime 源码 `cmake/vcpkg-ports/cpuinfo/patch_cpuinfo_h_for_loong64.patch`，再应用第二份补丁；这样 vcpkg 才会在构建 cpuinfo 时使用 LoongArch 代码。构建输入应先按 ONNX Runtime 1.28.0 的源码流程应用补丁并生成 `onnxruntime/*/lib` 与匹配 headers，再把生成结果放入输入目录；本仓库的依赖构建脚本只消费这些已构建输入，不会偷偷使用其它架构的预编译库。
 
-没有真实源码补丁的依赖不创建空目录。升级补丁时建立新的上游版本目录，并在对应源码上使用 `git apply --check` 验证。
+electron-builder 的 `patch-package` 补丁按以下顺序应用：
+
+```text
+builder-util
+app-builder-lib
+electron-builder
+app-builder-bin
+```
+
+`app-builder` 源码补丁在构建自定义 app-builder 时使用 `git apply`。补丁原文件来自前端仓库的 `patches/` 和 `src/client/builder/electron-make/app-builder/`，这里按组件版本归档，便于打包工具链和原生依赖使用同一份版本记录。升级任一上游版本时建立新的版本目录，并在对应源码上使用 `git apply --check` 验证；没有真实源码补丁的依赖不创建空目录。
 
 ## 兼容性边界
 

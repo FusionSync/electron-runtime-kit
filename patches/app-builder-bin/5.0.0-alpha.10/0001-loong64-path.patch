@@ -1,0 +1,45 @@
+diff --git a/node_modules/app-builder-bin/index.js b/node_modules/app-builder-bin/index.js
+index 9e66152..421e7c7 100644
+--- a/node_modules/app-builder-bin/index.js
++++ b/node_modules/app-builder-bin/index.js
+@@ -1,7 +1,28 @@
+ "use strict"
+ 
++const fs = require("fs")
++const { execFileSync } = require("child_process")
+ const path = require("path")
+ 
++function getLinuxArchDirectories() {
++  // Node reports loong64, while Linux uname and some app-builder-bin
++  // packages use loongarch64 for the same architecture.  Accept both names
++  // and select the directory that is actually included in the package.
++  if (process.arch !== "loong64") {
++    return [process.arch]
++  }
++
++  let machine
++  try {
++    machine = execFileSync("uname", ["-m"], { encoding: "utf8" }).trim()
++  }
++  catch {
++    machine = undefined
++  }
++
++  return [...new Set([machine, "loongarch64", "loong64"].filter(Boolean))]
++}
++
+ function getPath() {
+   if (process.env.USE_SYSTEM_APP_BUILDER === "true") {
+     return "app-builder"
+@@ -19,7 +40,10 @@ function getPath() {
+     return path.join(__dirname, "win", arch, "app-builder.exe")
+   }
+   else {
+-    return path.join(__dirname, "linux", arch, "app-builder")
++    const candidates = getLinuxArchDirectories().map((directory) =>
++      path.join(__dirname, "linux", directory, "app-builder"),
++    )
++    return candidates.find((candidate) => fs.existsSync(candidate)) || candidates[0]
+   }
+ }
+ 

@@ -1,0 +1,30 @@
+diff --git a/node_modules/app-builder-lib/scheme.json b/node_modules/app-builder-lib/scheme.json
+index ea3069a..2fa01b4 100644
+--- a/node_modules/app-builder-lib/scheme.json
++++ b/node_modules/app-builder-lib/scheme.json
+@@ -312,7 +312,11 @@
+         "armv7l",
+         "ia32",
+         "universal",
+-        "x64"
++        "x64",
++        "loong64",
++        "loongarch64",
++        "riscv64",
++        "mips64el"
+       ],
+       "type": "string"
+     },
+@@ -5951,7 +5955,11 @@
+                 "armv7l",
+                 "ia32",
+                 "universal",
+-                "x64"
++                "x64",
++                "loong64",
++                "loongarch64",
++                "riscv64",
++                "mips64el"
+               ],
+               "type": "string"
+             }

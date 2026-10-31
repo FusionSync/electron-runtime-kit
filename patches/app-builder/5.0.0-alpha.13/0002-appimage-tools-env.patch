@@ -1,0 +1,27 @@
+diff --git a/pkg/linuxTools/tool.go b/pkg/linuxTools/tool.go
+index 0e5c5c8..6a4c4be 100644
+--- a/pkg/linuxTools/tool.go
++++ b/pkg/linuxTools/tool.go
+@@ -13,9 +13,20 @@ import (
+ func GetAppImageToolDir() (string, error) {
+ 	dirName := "appimage-12.0.1"
+ 	//noinspection SpellCheckingInspection
++	checksum := "3el6RUh6XoYJCI/ZOApyb0LLU/gSxDntVZ46R6+JNEANzfSo7/TfrzCRp5KlDo35c24r3ZOP7nnw4RqHwkMRLw=="
++	if value := os.Getenv("ELECTRON_BUILDER_APPIMAGE_TOOLS_SHA512"); value != "" {
++		checksum = value
++	}
++	if os.Getenv("ELECTRON_BUILDER_APPIMAGE_TOOLS_SKIP_CHECKSUM") == "true" {
++		checksum = ""
++	}
++	url := os.Getenv("ELECTRON_BUILDER_APPIMAGE_TOOLS_URL")
++	if url == "" {
++		url = download.GetGithubBaseUrl() + dirName + "/" + dirName + ".7z"
++	}
+ 	result, err := download.DownloadArtifact("",
+-		download.GetGithubBaseUrl()+dirName+"/"+dirName+".7z",
+-		"3el6RUh6XoYJCI/ZOApyb0LLU/gSxDntVZ46R6+JNEANzfSo7/TfrzCRp5KlDo35c24r3ZOP7nnw4RqHwkMRLw==")
++		url,
++		checksum)
+ 	if err != nil {
+ 		return "", err
+ 	}
