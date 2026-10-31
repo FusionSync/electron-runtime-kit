@@ -1,0 +1,10 @@
+.build/
+dist/
+release-assets/
+*.tar.gz
+*.tgz
+*.zip
+*.whl
+node_modules/
+__pycache__/
+.DS_Store
