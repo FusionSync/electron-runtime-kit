@@ -1,8 +1,8 @@
 {
-  "name": "electron-native-deps",
+  "name": "electron-runtime-kit",
   "version": "0.1.0",
   "private": true,
-  "description": "Native Linux dependencies for Electron 37 on systems with GLIBC <= 2.28.",
+  "description": "Reproducible x86_64-hosted build and release kit for Electron Linux runtimes and native dependencies targeting GLIBC <= 2.28.",
   "license": "MIT",
   "engines": {
     "node": ">=16.20.2"
@@ -10,6 +10,11 @@
   "consumer": {
     "product": "DSH HAREMESS + Electron client",
     "electron": "37.2.2"
+  },
+  "buildHost": "x86_64",
+  "runtimeSource": {
+    "repository": "FusionSync/electron-loong64",
+    "url": "https://github.com/FusionSync/electron-loong64"
   },
   "target": {
     "os": "linux",

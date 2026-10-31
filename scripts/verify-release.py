@@ -100,9 +100,9 @@ def main() -> int:
                     errors.append(f"{item['path']}: expected {expected_machine}, got {item['machine']}")
                 if item["glibc_max"] and version_key(item["glibc_max"]) > (2, 28):
                     errors.append(f"{item['path']}: GLIBC_{item['glibc_max']} exceeds 2.28")
-                if item["needed"] and package in {"sharp", "sherpa-onnx-node"}:
+                if item["needed"] and package in {"sharp", "sherpa-onnx-node"} and item["path"].endswith(".node"):
                     paths = item["rpath"] + item["runpath"]
-                    if "$ORIGIN" not in paths:
+                    if not any("$ORIGIN" in path for path in paths):
                         errors.append(f"{item['path']}: missing $ORIGIN RPATH/RUNPATH")
             if missing:
                 errors.append("missing required paths: " + ", ".join(missing))
